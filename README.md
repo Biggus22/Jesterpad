@@ -1,4 +1,4 @@
-# ZMK Module Template
+# ZMK Module Template 
 
 This repository contains a template for a ZMK module, as it would most frequently be used. 
 
