@@ -52,12 +52,6 @@
         resolution = <4>;
     };
 
-    // Potentiometer on P0.29
-    adc: adc {
-        compatible = "nordic,nrf-saadc";
-        status = "okay";
-    };
-
     // SK6812 RGB LEDs connected to P0.17
     led_strip: led_strip {
         compatible = "zmk,rgb-led-strip";
