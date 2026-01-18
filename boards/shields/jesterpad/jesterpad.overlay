@@ -37,19 +37,15 @@
     // Encoder 1
     encoder0: encoder0 {
         compatible = "alps,ec11";
-        label = "ENCODER1";
         a-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;  /* P0.06 */
         b-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;  /* P0.08 */
-        resolution = <4>;
     };
 
     // Encoder 2
     encoder1: encoder1 {
         compatible = "alps,ec11";
-        label = "ENCODER2";
         a-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>; /* P0.22 */
         b-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>; /* P0.24 */
-        resolution = <4>;
     };
 
     // SK6812 RGB LEDs connected to P0.17
@@ -58,16 +54,6 @@
         num-devices = <10>;  // Adjust based on how many LEDs you have
         spi-max-frequency = <3200000>;
         status = "okay";
-    };
-
-    // GPIO to set high for potentiometer power (P0.31)
-    pot_power_pin: pot_power_pin {
-        compatible = "gpio-leds";
-        pot_power {
-            gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;  /* P0.31 */
-            label = "Pot Power";
-            default-state = "on";
-        };
     };
 
     // LED standby switch (P1.13) - controls LED power
