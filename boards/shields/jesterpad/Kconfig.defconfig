@@ -1,0 +1,6 @@
+if SHIELD_JESTERPAD
+
+config ZMK_KEYBOARD_NAME
+    default "Jesterpad"
+
+endif

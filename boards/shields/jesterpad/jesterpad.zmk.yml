@@ -1,0 +1,10 @@
+file_format: "1"
+id: jesterpad
+name: Jesterpad
+type: shield
+url: https://github.com/Biggus22/Jesterpad
+requires: [pro_micro]
+features:
+  - keys
+  - encoder
+exposes: [i2c_oled]
