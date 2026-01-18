@@ -4,42 +4,28 @@
     chosen {
         zmk,kscan = &kscan0;
         zmk,matrix_transform = &default_transform;
-        zmk,physical-layout = &default_layout;
     };
 
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         diode-direction = "col2row";
-        wakeup-source;
-
-        col-gpios
-            = <&gpio0 2 GPIO_ACTIVE_HIGH>    // P0.02 (Column 1)
-            , <&gpio1 15 GPIO_ACTIVE_HIGH>   // P1.15 (Column 2)
-            , <&gpio1 11 GPIO_ACTIVE_HIGH>   // P1.11 (Column 3)
-            , <&gpio0 10 GPIO_ACTIVE_HIGH>   // P0.10 (Column 4)
-            , <&gpio0 9 GPIO_ACTIVE_HIGH>    // P0.09 (Column 5)
-            ;
-
-        row-gpios
-            = <&gpio1 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // P1.06 (Row 1)
-            , <&gpio1 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // P1.04 (Row 2)
-            , <&gpio0 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>  // P0.11 (Row 3)
-            , <&gpio1 0 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // P1.00 (Row 4)
-            ;
+        col-gpios =
+            <&gpio0 2 GPIO_ACTIVE_HIGH>,
+            <&gpio1 15 GPIO_ACTIVE_HIGH>,
+            <&gpio1 11 GPIO_ACTIVE_HIGH>,
+            <&gpio0 10 GPIO_ACTIVE_HIGH>,
+            <&gpio0 9 GPIO_ACTIVE_HIGH>;
+        row-gpios =
+            <&gpio1 6 GPIO_ACTIVE_HIGH>,
+            <&gpio1 4 GPIO_ACTIVE_HIGH>,
+            <&gpio0 11 GPIO_ACTIVE_HIGH>,
+            <&gpio1 0 GPIO_ACTIVE_HIGH>;
     };
 
     default_transform: keymap_transform_0 {
         compatible = "zmk,matrix-transform";
         columns = <5>;
         rows = <4>;
-
-        /* Matrix layout:
-           C1  C2  C3  C4  C5
-        R1 [0,0][0,1][0,2][0,3][0,4]
-        R2 [1,0][1,1][1,2][1,3][1,4]
-        R3 [2,0][2,1][2,2][2,3][2,4]
-        R4 [3,0][3,1][3,2]   [3,4]
-        */
         map = <
             /* Row 1 */ RC(0,0) RC(0,1) RC(0,2) RC(0,3) RC(0,4)
             /* Row 2 */ RC(1,0) RC(1,1) RC(1,2) RC(1,3) RC(1,4)
@@ -48,82 +34,52 @@
         >;
     };
 
-    default_layout: default_layout {
-        compatible = "zmk,physical-layout";
-        display-name = "Jesterpad Layout";
-        transform = <&default_transform>;
-        kscan = <&kscan0>;
-    };
-
     // Encoder 1
-    encoder_1: encoder_1 {
+    encoder0: encoder0 {
         compatible = "alps,ec11";
-        a-gpios = <&gpio0 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  // P0.06
-        b-gpios = <&gpio0 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;  // P0.08
-        steps = <24>;
-        status = "okay";
+        label = "ENCODER1";
+        a-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;  /* P0.06 */
+        b-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;  /* P0.08 */
+        resolution = <4>;
     };
 
     // Encoder 2
-    encoder_2: encoder_2 {
+    encoder1: encoder1 {
         compatible = "alps,ec11";
-        a-gpios = <&gpio0 22 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>; // P0.22
-        b-gpios = <&gpio0 24 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>; // P0.24
-        steps = <24>;
-        status = "okay";
-    };
-
-    // Rotary encoder (reserved)
-    encoder_3: encoder_3 {
-        compatible = "alps,ec11";
-        a-gpios = <&gpio0 20 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>; // P0.20
-        b-gpios = <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>; // P0.21 (assuming adjacent pin)
-        steps = <24>;
-        status = "disabled";
+        label = "ENCODER2";
+        a-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>; /* P0.22 */
+        b-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>; /* P0.24 */
+        resolution = <4>;
     };
 
     // Potentiometer on P0.29
-    adc1: adc {
-        compatible = "nordic,nrf-adc";
-        io-channels = <&adc 7>;  // AIN7 corresponds to P0.29
+    adc: adc {
+        compatible = "nordic,nrf-saadc";
         status = "okay";
     };
 
-    // LED standby switch (P1.13) - sets P0.31 high when P1.13 is active
-    led_standby_switch: led_standby_switch {
-        compatible = "gpio-keys";
-        autorepeat;
-        gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;  // P1.13
-        label = "LED Standby Switch";
-    };
-
-    // GPIO to set high for potentiometer power (P0.31)
-    pot_power_pin: pot_power_pin {
-        compatible = "gpio-leds";
-        pot-power {
-            gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;  // P0.31
-            label = "Pot Power";
-            default-state = "on";
-        };
-    };
-
-    // SK6812 RGB LEDs connected to P0.17 using SPI
-    sk6812_strip: sk6812_strip {
-        compatible = "worldsemi,sk6812-spi";
+    // SK6812 RGB LEDs connected to P0.17
+    led_strip: led_strip {
+        compatible = "zmk,rgb-led-strip";
         num-devices = <10>;  // Adjust based on how many LEDs you have
         spi-max-frequency = <3200000>;
         status = "okay";
     };
 
-    // Define PWM for RGB LEDs if needed (alternative approach)
-    pwm_leds: pwm_leds {
-        compatible = "pwm-leds";
-        status = "disabled";
+    // GPIO to set high for potentiometer power (P0.31)
+    pot_power_pin: pot_power_pin {
+        compatible = "gpio-leds";
+        pot_power {
+            gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;  /* P0.31 */
+            label = "Pot Power";
+            default-state = "on";
+        };
     };
 
-    sensors: sensors {
-        compatible = "zmk,keymap-sensors";
-        sensors = <&encoder_1 &encoder_2>;
-        triggers-per-rotation = <20>;
+    // LED standby switch (P1.13) - controls LED power
+    led_standby_switch: led_standby_switch {
+        compatible = "gpio-keys";
+        gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;  /* P1.13 */
+        label = "LED Standby Switch";
     };
 };
