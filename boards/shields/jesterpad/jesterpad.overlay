@@ -56,10 +56,4 @@
         status = "okay";
     };
 
-    // LED standby switch (P1.13) - controls LED power
-    led_standby_switch: led_standby_switch {
-        compatible = "gpio-keys";
-        gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;  /* P1.13 */
-        label = "LED Standby Switch";
-    };
 };
