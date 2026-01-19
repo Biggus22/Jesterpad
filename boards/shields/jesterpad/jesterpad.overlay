@@ -66,11 +66,11 @@
 
     // Encoders
     encoder_1: encoder_1 {
-        compatible = "alps,ec11";
-        a-gpios = <&gpio0 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-        b-gpios = <&gpio0 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-        steps = <80>;
-        status = "okay";
+    compatible = "alps,ec11";
+    a-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_DOWN)>;
+    b-gpios = <&gpio0 8 (GPIO_ACTIVE_LOW | GPIO_PULL_DOWN)>;
+    steps = <20>;
+    status = "okay";
     };
 
     encoder_2: encoder_2 {
