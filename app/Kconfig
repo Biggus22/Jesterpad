@@ -116,6 +116,12 @@ config ZMK_HID_SEPARATE_MOD_RELEASE_REPORT
       Send a separate release event for the modifiers, to make sure the release
       of the modifier doesn't get recognized before the actual key's release event.
 
+config JESTERPAD_ANALOG_AXIS
+        bool "Enable Jesterpad analog axis input"
+        depends on ADC && ZMK_GAMEPAD
+        help
+            Enable the Jesterpad analog axis input device (ADC -> HID gamepad axis).
+
 config ZMK_GAMEPAD
         bool "Enable HID gamepad report"
         help
