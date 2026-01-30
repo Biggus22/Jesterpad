@@ -245,9 +245,11 @@ int zmk_usb_hid_send_mouse_report() {
 
 #if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
 int zmk_usb_hid_send_gamepad_report() {
+#if IS_ENABLED(CONFIG_ZMK_USB_BOOT)
     if (hid_protocol == HID_PROTOCOL_BOOT) {
         return -ENOTSUP;
     }
+#endif /* IS_ENABLED(CONFIG_ZMK_USB_BOOT) */
     struct zmk_hid_gamepad_report *report = zmk_hid_get_gamepad_report();
     return zmk_usb_hid_send_report((uint8_t *)report, sizeof(*report));
 }
