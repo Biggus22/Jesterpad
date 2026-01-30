@@ -16,6 +16,19 @@
 #include <zmk/pointing.h>
 #endif // IS_ENABLED(CONFIG_ZMK_POINTING)
 
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+struct zmk_hid_gamepad_report_body {
+    uint16_t buttons;
+    int16_t x;
+    int16_t y;
+} __packed;
+
+struct zmk_hid_gamepad_report {
+    uint8_t report_id;
+    struct zmk_hid_gamepad_report_body body;
+} __packed;
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+
 #include <dt-bindings/zmk/hid_usage.h>
 #include <dt-bindings/zmk/hid_usage_pages.h>
 
@@ -76,6 +89,7 @@
 #define ZMK_HID_REPORT_ID_LEDS 0x01
 #define ZMK_HID_REPORT_ID_CONSUMER 0x02
 #define ZMK_HID_REPORT_ID_MOUSE 0x03
+#define ZMK_HID_REPORT_ID_GAMEPAD 0x04
 
 #ifndef HID_ITEM_TAG_PUSH
 #define HID_ITEM_TAG_PUSH 0xA
@@ -184,6 +198,33 @@ static const uint8_t zmk_hid_report_desc[] = {
     HID_REPORT_COUNT(CONFIG_ZMK_HID_CONSUMER_REPORT_SIZE),
     HID_INPUT(ZMK_HID_MAIN_VAL_DATA | ZMK_HID_MAIN_VAL_ARRAY | ZMK_HID_MAIN_VAL_ABS),
     HID_END_COLLECTION,
+
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+    HID_USAGE_PAGE(HID_USAGE_GD),
+    HID_USAGE(HID_USAGE_GD_GAMEPAD),
+    HID_COLLECTION(HID_COLLECTION_APPLICATION),
+    HID_REPORT_ID(ZMK_HID_REPORT_ID_GAMEPAD),
+
+    HID_USAGE_PAGE(HID_USAGE_BUTTON),
+    HID_USAGE_MIN8(0x01),
+    HID_USAGE_MAX8(0x10),
+    HID_LOGICAL_MIN8(0x00),
+    HID_LOGICAL_MAX8(0x01),
+    HID_REPORT_SIZE(0x01),
+    HID_REPORT_COUNT(0x10),
+    HID_INPUT(ZMK_HID_MAIN_VAL_DATA | ZMK_HID_MAIN_VAL_VAR | ZMK_HID_MAIN_VAL_ABS),
+
+    HID_USAGE_PAGE(HID_USAGE_GD),
+    HID_USAGE(HID_USAGE_GD_X),
+    HID_USAGE(HID_USAGE_GD_Y),
+    HID_LOGICAL_MIN16(0x00, 0x80),
+    HID_LOGICAL_MAX16(0xFF, 0x7F),
+    HID_REPORT_SIZE(0x10),
+    HID_REPORT_COUNT(0x02),
+    HID_INPUT(ZMK_HID_MAIN_VAL_DATA | ZMK_HID_MAIN_VAL_VAR | ZMK_HID_MAIN_VAL_ABS),
+
+    HID_END_COLLECTION,
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)
 
 #if IS_ENABLED(CONFIG_ZMK_POINTING)
     HID_USAGE_PAGE(HID_USAGE_GD),
@@ -380,6 +421,12 @@ void zmk_hid_mouse_clear(void);
 
 #endif // IS_ENABLED(CONFIG_ZMK_POINTING)
 
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+void zmk_hid_gamepad_axis_set(int16_t x, int16_t y);
+void zmk_hid_gamepad_axis_update(int16_t dx, int16_t dy);
+void zmk_hid_gamepad_clear(void);
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+
 struct zmk_hid_keyboard_report *zmk_hid_get_keyboard_report(void);
 struct zmk_hid_consumer_report *zmk_hid_get_consumer_report(void);
 
@@ -390,3 +437,7 @@ zmk_hid_boot_report_t *zmk_hid_get_boot_report();
 #if IS_ENABLED(CONFIG_ZMK_POINTING)
 struct zmk_hid_mouse_report *zmk_hid_get_mouse_report();
 #endif // IS_ENABLED(CONFIG_ZMK_POINTING)
+
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+struct zmk_hid_gamepad_report *zmk_hid_get_gamepad_report();
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)

@@ -100,6 +100,14 @@ static int get_report_cb(const struct device *dev, struct usb_setup_packet *setu
             *len = sizeof(*report);
             break;
         }
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+        case ZMK_HID_REPORT_ID_GAMEPAD: {
+            struct zmk_hid_gamepad_report *report = zmk_hid_get_gamepad_report();
+            *data = (uint8_t *)report;
+            *len = sizeof(*report);
+            break;
+        }
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)
         default:
             LOG_ERR("Invalid report ID %d requested", setup->wValue & HID_GET_REPORT_ID_MASK);
             return -EINVAL;
@@ -234,6 +242,16 @@ int zmk_usb_hid_send_mouse_report() {
     return zmk_usb_hid_send_report((uint8_t *)report, sizeof(*report));
 }
 #endif // IS_ENABLED(CONFIG_ZMK_POINTING)
+
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+int zmk_usb_hid_send_gamepad_report() {
+    if (hid_protocol == HID_PROTOCOL_BOOT) {
+        return -ENOTSUP;
+    }
+    struct zmk_hid_gamepad_report *report = zmk_hid_get_gamepad_report();
+    return zmk_usb_hid_send_report((uint8_t *)report, sizeof(*report));
+}
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)
 
 static int zmk_usb_hid_init(void) {
     hid_dev = device_get_binding("HID_0");

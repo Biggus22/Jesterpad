@@ -33,6 +33,13 @@ static struct zmk_hid_mouse_report mouse_report = {
 
 #endif // IS_ENABLED(CONFIG_ZMK_POINTING)
 
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+
+static struct zmk_hid_gamepad_report gamepad_report = {
+    .report_id = ZMK_HID_REPORT_ID_GAMEPAD, .body = {.buttons = 0, .x = 0, .y = 0}};
+
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+
 // Keep track of how often a modifier was pressed.
 // Only release the modifier if the count is 0.
 static int explicit_modifier_counts[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -468,6 +475,25 @@ void zmk_hid_mouse_clear(void) {
 
 #endif // IS_ENABLED(CONFIG_ZMK_POINTING)
 
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+void zmk_hid_gamepad_axis_set(int16_t x, int16_t y) {
+    gamepad_report.body.x = x;
+    gamepad_report.body.y = y;
+    LOG_DBG("Gamepad axis set to %d/%d", gamepad_report.body.x, gamepad_report.body.y);
+}
+
+void zmk_hid_gamepad_axis_update(int16_t dx, int16_t dy) {
+    gamepad_report.body.x += dx;
+    gamepad_report.body.y += dy;
+    LOG_DBG("Gamepad axis updated to %d/%d", gamepad_report.body.x, gamepad_report.body.y);
+}
+
+void zmk_hid_gamepad_clear(void) {
+    LOG_DBG("Gamepad report cleared");
+    memset(&gamepad_report.body, 0, sizeof(gamepad_report.body));
+}
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+
 struct zmk_hid_keyboard_report *zmk_hid_get_keyboard_report(void) { return &keyboard_report; }
 
 struct zmk_hid_consumer_report *zmk_hid_get_consumer_report(void) { return &consumer_report; }
@@ -477,3 +503,7 @@ struct zmk_hid_consumer_report *zmk_hid_get_consumer_report(void) { return &cons
 struct zmk_hid_mouse_report *zmk_hid_get_mouse_report(void) { return &mouse_report; }
 
 #endif // IS_ENABLED(CONFIG_ZMK_POINTING)
+
+#if IS_ENABLED(CONFIG_ZMK_GAMEPAD)
+struct zmk_hid_gamepad_report *zmk_hid_get_gamepad_report(void) { return &gamepad_report; }
+#endif // IS_ENABLED(CONFIG_ZMK_GAMEPAD)
